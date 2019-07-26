@@ -37,22 +37,31 @@ typedef struct {
    int raio;
    int x,y;      
 }circulo;
-void movimentacao(Rectangle* Jorger){
+void movimentacao(Rectangle* Jorger,  Rectangle* Jorgerec){
         if (IsKeyDown(KEY_DOWN))
         {
             (Jorger->y)+= 4; //y cresce para baixo.
+            (Jorgerec->width) = 53;
+            (Jorgerec->x) = 0;
+            
         }
         else if(IsKeyDown(KEY_UP))
         {
             (Jorger->y) -= 4;
+            (Jorgerec->width) = 53;
+            (Jorgerec->x) = 90;
         }
         else if(IsKeyDown(KEY_RIGHT))
         {
             (Jorger->x) +=4;
+            (Jorgerec->width) = 40;
+            (Jorgerec->x) = 50;
         }
         else if(IsKeyDown(KEY_LEFT))
         {
             (Jorger->x) -=4;
+            (Jorgerec->width) = 40;
+            (Jorgerec->x) = 145;
         }
 }
 void colisao(Rectangle* Jorger){ 
@@ -206,8 +215,6 @@ void batalhafuncao2(Texture2D fala,int* ruim, int* batalha,int* falac){
         (*batalha)=0;
       }          
         
-       
-        
 }
 void batalhafuncao3(Texture2D fala,int* ruim, int* batalha,int* falac){
       (*falac)=1;
@@ -315,6 +322,7 @@ void terapiaaviso(Texture2D fala,int* falac, Rectangle* Jorger, Rectangle falaco
      DrawText("Está na hora de Jorge ir à terapia",210,660,20,WHITE);
      
 }
+
 void tudoDoJorge(){
     
     int screenWidth = 1366; //dimensão da minha tela
@@ -327,15 +335,14 @@ void tudoDoJorge(){
         Image Quarto = LoadImage("/jogoip/Quarto002.png"); //diretorio apartir do C: com as \ invertidas (/);
         Image Jorgeim = LoadImage("/jogoip/Jorge01.png");
         Image memoriasim = LoadImage("/jogoip/memorias.png");
-        Image monstro = LoadImage("/jogoip/monstro2.png");
+        Image monstro = LoadImage("/jogoip/monstro.png");
         Image fala = LoadImage("/jogoip/fala.png");
         Image tutorialim = LoadImage("/jogoip/tutorial.png");
         Image info1 = LoadImage("/jogoip/panico.png");
      //Image Resize:
-        ImageResize (&Jorgeim,144,104); //144,104,(108,78) - Aumentando a imagem original
+        ImageResize (&Jorgeim,185,104); //144,104,(108,78) - Aumentando a imagem original
         ImageResize (&Quarto,1366,788); //passar o endereço pq ele modifica a imagem original.
         ImageResize (&fala,1366,300);
-        ImageResize (&monstro,1300,678);
         ImageResize (&tutorialim,1366,788);
      //Texture2D:
         Texture2D Quartotx = LoadTextureFromImage(Quarto);
@@ -397,12 +404,10 @@ void tudoDoJorge(){
         Rectangle memoriasrec = {0,0,30,20}; //ok!
         Rectangle memoriassadrec = {30,20,30,20}; //ok!
         Rectangle conflitorec = {60,40,35,20};
-        Rectangle monstrorec = {0,0,90,90};
+        Rectangle monstrorec = {0,0,93,126};
         
        
-        
-        
-       //posição das memórias:
+        //posição das memórias:
         Vector2 memoriasp = {500,325}; //ferias com a família
         Vector2 memoriasp2 = {600,325}; //ganhou um ps4
         Vector2 memoriasp3 = {600,525}; //passou de ano
@@ -459,10 +464,6 @@ void tudoDoJorge(){
             subiu_de_level();
             menu();
         }
-        //Condição do game over
-        if(estabilidade <= 0 ){
-            menu();
-        }
         
          contadordetempo++;
          Vector2 Jorgep = {Jorger.x,Jorger.y-51}; //posição do Jorge (menos 51 para a colisão ficar no pé)
@@ -483,7 +484,7 @@ void tudoDoJorge(){
         //função de movimentação do jorge:
         if(desafio==0)
         {
-            movimentacao(&Jorger);
+            movimentacao(&Jorger, &Jorgerec);
         }
          
         //Checando se saiu do mapa:
@@ -1005,10 +1006,7 @@ void tudoDoJorge(){
                    desafio=0;
                    conflito.x=0;
                    conflito.y=0;
-                   
                }
-               
-               
            }
            if(batalha==0 && ruim<0)
             {
@@ -1027,6 +1025,7 @@ void tudoDoJorge(){
                    }
                    
             }
+            
             if(desafio==2)
            {
                
@@ -1132,12 +1131,7 @@ void tudoDoJorge(){
            if(desenhar==1)
            {
                DrawTextureRec(Jorgetx,Jorgerec,Jorgep,RAYWHITE);
-           }
-           if(estabilidade >= 30)
-           {
-               subiu_de_level();
-           }
-
+           }           
            if (IsKeyDown(KEY_T)){
                DrawTexture(tutorialtx,0,0,RAYWHITE);
            }
@@ -1146,6 +1140,50 @@ void tudoDoJorge(){
            {
                DrawTexture(info1tx,340,256,RAYWHITE); 
            }
+           
+           if(estabilidade==7)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Jorge sente que está perdendo o controle sobre si!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+               
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=8;
+               }
+           }
+           if(estabilidade == 4)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Jorge tem uma forte sensação de que vai enlouquecer!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+               
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=5;
+               }
+           }
+           if(estabilidade == 1)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Jorge está sozinho e com muito medo de ter uma crise de pânico!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+               
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=2;
+               }
+           }
+           
+           if(estabilidade <= 0) //game over
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Jorge sente um desconforto no peito, seu coração acelera, está com falta de ar e tontura",220,650,20,WHITE);
+               DrawText("Jorge está tendo uma crise de pânico!\n[PRESS SPACE TO RESTART]",220,680,20,WHITE);
+               
+               if(IsKeyPressed(KEY_SPACE))
+               {
+                   menu();
+               }
+               
+           }
         EndDrawing();
     }
     CloseWindow();
@@ -1153,24 +1191,31 @@ void tudoDoJorge(){
 
 //FASE 2
 
-void movimentacaoK(Rectangle* Karolr){
+void movimentacaoK(Rectangle* Karolr, Rectangle* Karolrec){
         if (IsKeyDown(KEY_DOWN))
         {
             (Karolr->y)+= 4; //y cresce para baixo.
+			(Karolrec->width) = 55;
+            (Karolrec->x) = 0;
         }
         else if(IsKeyDown(KEY_UP))
         {
             (Karolr->y) -= 4;
+			(Karolrec->width) = 60;
+            (Karolrec->x) = 139;
         }
         else if(IsKeyDown(KEY_RIGHT))
         {
             (Karolr->x) +=4;
+			(Karolrec->width) = 55;
+            (Karolrec->x) = 70;
         }
         else if(IsKeyDown(KEY_LEFT))
         {
             (Karolr->x) -=4;
-        }
-            
+			(Karolrec->width) = 54;
+            (Karolrec->x) = 197;
+        }   
     
 }
 void colisaoK(Rectangle* Karolr){ 
@@ -1408,7 +1453,6 @@ void tudoDaKarol(){
         Image Quarto = LoadImage("/jogoip/Quarto002.png"); //diretorio apartir do C: com as \ invertidas (/);
         Image Jorgeim = LoadImage("/jogoip/Jorge01.png");
         Image memoriasim = LoadImage("/jogoip/memorias.png");
-        Image monstro = LoadImage("/jogoip/monstro2.png");
         Image fala = LoadImage("/jogoip/fala.png");
         Image Karolim = LoadImage("/jogoip/Karol01.png");
         Image desafioim = LoadImage("/jogoip/aviao.png");
@@ -1416,10 +1460,9 @@ void tudoDaKarol(){
 
      //Image Resize:
         //ImageResize (&Jorgeim,144,104); //144,104,(108,78) - Aumentando a imagem original
-        ImageResize (&Karolim,144,104);
+        ImageResize (&Karolim,251,104);
         ImageResize (&Quarto,1366,788); //passar o endereço pq ele modifica a imagem original.
         ImageResize (&fala,900,200);
-        ImageResize (&monstro,1300,678);
         ImageResize (&desafioim,96,102);
      //Texture2D:
         Texture2D Quartotx = LoadTextureFromImage(Quarto);
@@ -1534,16 +1577,6 @@ void tudoDaKarol(){
     while (!WindowShouldClose())   
     { 
         UpdateMusicStream (memory); 
-        
-        if(estabilidade >= 30){
-            subiu_de_level();
-            menu();
-        }
-        
-        if(estabilidade <= 0){
-            main();
-        }
-        
          contadordetempo++;
          //Vector2 Jorgep = {Jorger.x,Jorger.y-51}; //posição do Jorge (menos 51 para a colisão ficar no pé)
          Vector2 Karolp = {Karolr.x,Karolr.y-51};
@@ -1552,7 +1585,7 @@ void tudoDaKarol(){
          int y = GetMouseY();
         
         //função de movimentação do jorge:
-         movimentacaoK(&Karolr);
+         movimentacaoK(&Karolr, &Karolrec);
         //Checando se saiu do mapa:
         tamanhotelaK(&Karolr,screenHeight,screenWidth);
         //atualizando estabilidade:
@@ -1802,17 +1835,17 @@ void tudoDaKarol(){
                                                                                                                                         refletir=0;
                                                                                                                                     }
                                                                                                                         }
-                                                                                                                }else 
-                                                                                                                    if(CheckCollisionRecs(Karolr,falacolisao))
-                                                                                                                        {
+                                                                                                                }
+                                                                                                        } 
+                                                                                                         else if(CheckCollisionRecs(Karolr,falacolisao))
+                                                                                                         {
                                                                                                                             if(falac==1 && ruim>=1)
                                                                                                                                 {
                                                                                                                                     colisaoK(&Karolr);  
                                                                                                                                     falac=0;
                                                                                                                                 }
                                                                                                                                                                     
-                                                                                                                         }  
-                                                                                                        } 
+                                                                                                         }  
 
 if(colis[0]==1||colis[0]==3||colis[0]==5||colis[0]==7||colis[0]==9)
 {
@@ -2086,13 +2119,7 @@ if(colis[0]==2||colis[0]==4||colis[0]==6||colis[0]==8||colis[0]==10)
            {
               DrawTextureRec(memoriastx,memoriasrec,memoriasp4,RAYWHITE);  
            }
-           //desenhando desafio:
-           if(memoria==1)
-           {
-               
-                desafiofuncaoK(falatx,&ruim,&falac,colis[0]);
-
-           }
+           
            //diversao e terapia:
            if(diversao==1)
            {
@@ -2105,6 +2132,13 @@ if(colis[0]==2||colis[0]==4||colis[0]==6||colis[0]==8||colis[0]==10)
            if(remedio==1)
            {
                remedioavisoK(falatx, &falac, &Karolr, falacolisao);
+           }
+           //desenhando desafio:
+           if(memoria==1)
+           {
+               
+                desafiofuncaoK(falatx,&ruim,&falac,colis[0]);
+
            }
            int espera = 1000; //modificar essa variável para reduzir o tempo de espera
            if(contadordetempo>=(2*minutos)+espera && contadordetempo<(4*minutos)) 
@@ -2131,9 +2165,7 @@ if(colis[0]==2||colis[0]==4||colis[0]==6||colis[0]==8||colis[0]==10)
            //Condição para ganhar ou perder o jogo
            if(estabilidade >= 30)
            {
-               subiu_de_level();
-           }
-           if(estabilidade<=0){
+               tudoDoGuilherme();
                menu();
            }
            //xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -2148,6 +2180,49 @@ if(colis[0]==2||colis[0]==4||colis[0]==6||colis[0]==8||colis[0]==10)
            if(IsKeyDown(KEY_I))
            {
                DrawTexture(info2tx,340,256,RAYWHITE); 
+           }
+           
+           if(estabilidade==7)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Karol está com uma forte sensação que algo ruim está para acontecer, isso a deixa inquieta.\nKarol está com tremor nas mãos!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+               
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=8;
+               }
+           }
+           if(estabilidade == 4)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Algo está deixando Karol muito apreensiva, ela não consegue se concentrar e sente \num desconfortável frio na barriga.\nKarol está com medo!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+           
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=5;
+               }
+           }
+           if(estabilidade == 1)
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Karol se sente extremamente preocupada com nada em específico e está suscetível a perder a paciência,\numa dor no peito a incomoda constantemente e ela está soando frio.\nKarol está prestes a ter uma crise de ansiedade!\n[PRESS R TO CONTINUE]",220,650,20,WHITE);
+           
+               if(IsKeyPressed(KEY_R))
+               {
+                   estabilidade=2;
+               }
+           }
+           
+           if(estabilidade <= 0) //game over
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Karol sente que não consegue respirar, uma forte tontura a domina, ela está suando muito\n e seu coração está batendo em ritmo acelerado.",200,630,20,WHITE);
+               DrawText("Karol sente que seus problemas estão sufocando-a. Karol está tendo uma crise de ansiedade!\n[PRESS SPACE TO RESTART]",200,680,20,WHITE);
+               
+               if(IsKeyPressed(KEY_SPACE))
+               {
+                   menu();
+               }
            }
         EndDrawing();
     }
@@ -2441,6 +2516,34 @@ void perdeumemoria(Texture2D fala,int* falac, Rectangle* Guilhermer, Rectangle f
      DrawText("Guilherme se esqueceu da memória que tentava guardar",450,720,20,WHITE);  
      
 }
+void movimentacaoG(Rectangle* Guilhermer, Rectangle* Guilhermerec){
+        if (IsKeyDown(KEY_DOWN))
+        {
+            (Guilhermer->y)+= 4; //y cresce para baixo.
+			(Guilhermerec->width) = 55;
+            (Guilhermerec->x) = 0;
+        }
+        else if(IsKeyDown(KEY_UP))
+        {
+            (Guilhermer->y) -= 4;
+			(Guilhermerec->width) = 55;
+            (Guilhermerec->x) = 100;
+        }
+        else if(IsKeyDown(KEY_RIGHT))
+        {
+            (Guilhermer->x) +=4;
+			(Guilhermerec->width) = 55;
+            (Guilhermerec->x) = 49;
+        }
+        else if(IsKeyDown(KEY_LEFT))
+        {
+            (Guilhermer->x) -=4;
+			(Guilhermerec->width) = 31;
+            (Guilhermerec->x) = 156;
+        }
+            
+    
+}
 void tudoDoGuilherme() {
     int screenWidth = 1366; //dimenssão da minha tela
     int screenHeight = 768;
@@ -2461,7 +2564,7 @@ void tudoDoGuilherme() {
         Image jogoim = LoadImage("/jogoip/jogo.png");
         Image Remedio = LoadImage("/jogoip/Remedio.png");
      //Image Resize:
-        ImageResize (&Guilhermeim,144,104); //144,104,(108,78) - Aumentando a imagem original
+        ImageResize (&Guilhermeim,187,104); //144,104,(108,78) - Aumentando a imagem original
         ImageResize (&Quarto,1366,788); //passar o endereço pq ele modifica a imagem original.
         ImageResize (&fala,900,200);
         ImageResize (&bolaim,96,52);
@@ -2515,6 +2618,11 @@ void tudoDoGuilherme() {
         Rectangle parede3 = {221,304,55,20};
         Rectangle parede4 = {0,669,190,340};
         Rectangle parede5 = {1166,669,190,340};
+        Rectangle latInfEsq = {0,672,230,768};
+        Rectangle latInfEsq2 ={0,700,300,768};
+        Rectangle latInfDir ={1060,678,1366,768}; 
+        
+        
         //Rectangle p1 = {};
         //Rectangle p2 = {};
         //Rectangle p3 = {};
@@ -2583,7 +2691,6 @@ void tudoDoGuilherme() {
         UpdateMusicStream (space);
         if(estabilidade >= 30)
            {
-            subiu_de_level();
             menu();
            }
  
@@ -2597,7 +2704,7 @@ void tudoDoGuilherme() {
         //função de movimentação do jorge:
         if(desafio==0)
         {
-           movimentacaoK(&Guilhermer); 
+           movimentacaoG(&Guilhermer, &Guilhermerec); 
         }
          
         //Checando se saiu do mapa:
@@ -2679,6 +2786,10 @@ void tudoDoGuilherme() {
                 diversao=0;
             }
             
+        }
+        else if(CheckCollisionRecs(Guilhermer,latInfEsq)==1 || CheckCollisionRecs(Guilhermer,latInfEsq2)==1|| CheckCollisionRecs(Guilhermer,latInfDir)==1)
+        {
+                    colisaoK(&Guilhermer);
         }
         else if(CheckCollisionRecs(Guilhermer,parede2)==1)
         {
@@ -2962,7 +3073,7 @@ void tudoDoGuilherme() {
            DrawText(TextFormat("Fase 3"),629,94,35,BLACK);
            DrawText(TextFormat("Refletir: "),15,710,35,BLACK);
            DrawText(TextFormat("Tempo: %0.1f", (float)(contadordetempo/100)),1150,42,30,BLACK);
-           DrawText(TextFormat("T - Tutorial"),1173,720,24,BLACK);
+           DrawText(TextFormat("Y - Tutorial"),1173,720,24,BLACK);
            DrawText(TextFormat("I - Info"),1173,690,24,BLACK);
            //DrawTextureRec(Karoltx,Karolrec,Karolp,RAYWHITE);
            //DrawTextureRec(Guilhermetx,Guilhermerec,Guilhermep,RAYWHITE);
@@ -3109,13 +3220,25 @@ void tudoDoGuilherme() {
            }
            
            //Tutorial:
-           if (IsKeyDown(KEY_T)){
+           if (IsKeyDown(KEY_Y)){
                DrawTexture(tutorialtx,0,0,RAYWHITE);
            }
            //Informações:
            if(IsKeyDown(KEY_I))
            {
                DrawTexture(info3tx,340,256,RAYWHITE); 
+           }
+           
+           if(estabilidade <= 0) //game over
+           {
+               DrawTexture(falatx,0,570,RAYWHITE);
+               DrawText("Guilherme não está conseguindo manter o foco. Sua mente fica confusa e com dificuldade\n de aprender novas coisas.",200,630,20,WHITE);
+               DrawText("Isso deixa Guilherme inseguro e com medo do julgamento alheio!\n[PRESS SPACE TO RESTART]",200,680,20,WHITE);
+               
+               if(IsKeyPressed(KEY_SPACE))
+               {
+                   menu();
+               }
            }
            
         EndDrawing();
@@ -3142,7 +3265,7 @@ void move_circ(int* posic){
 void menu(){
         
         int posic_circ = 470;
-        Image Menu = LoadImage("/jogoip/menu.png");
+        Image Menu = LoadImage("/jogoip/menuLogo.png");
         ImageResize (&Menu,1366,788);
         Texture2D Menutx = LoadTextureFromImage(Menu);
         
